@@ -1,5 +1,6 @@
 # Secret Keys
 *.secret.txt
+Keys.secret.txt
 
 # History files
 .Rhistory
