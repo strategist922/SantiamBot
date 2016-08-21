@@ -1,3 +1,6 @@
+# Secret Keys
+*.secret
+
 # History files
 .Rhistory
 .Rapp.history
