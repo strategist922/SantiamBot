@@ -9,6 +9,9 @@ library(twitteR)
 library(dplyr)
 
 
+## SET UP SOME GLOBAL VARIABLES
+
+
 ## SET UP TWITTER
     ## create URLs
     reqURL <- "https://api.twitter.com/oauth/request_token"
@@ -39,7 +42,7 @@ library(dplyr)
     
 ## CHECK FOR REQUESTS
     
-    sinceID.mention <- NULL
+    if (!exists(sinceID.mention)) sinceID.mention <- NULL
     
     mentionList <- mentions(n=5, maxID=NULL, sinceID=sinceID.mention, includeRts=FALSE)
     
@@ -81,9 +84,32 @@ library(dplyr)
     ##inspect it
     head(user_data)
     ## convert to a data frame
-    clean_data<-do.call(rbind,lapply(user_data,as.data.frame))
-    ##write the data as a csv
-    write.csv(clean_data, paste0(name,"_Jan16",".csv"))
+    hwy_df<-do.call(rbind,lapply(user_data,as.data.frame))
+    
+    
+## CLEAN AND TRANSFORM DATA    
+    
+    ## convert created column to date format
+    hwy_df$created<-as.Date(hwy_df$created)
+    
+    ## dedupe
+    hwy_df<-hwy_df[!duplicated(hwy_df$created),]
+    
+    ## look for specific incidents and create tidy data frames
+    
+        location <- "Santiam Pass Summit"
+        ##Get tweets with S1
+        hwy_df.santiam <-hwy_df[grep(location, hwy_df$text),]
+    
+        incident <- "crash"
+        ## get tweets with S2
+        hwy_df.santiam.crash <-hwy_df[grep(incident, hwy_df.santiam$text),]
+    
+        incident <- "snow"
+        ## get tweets with S2
+        hwy_df.santiam.snow <-hwy_df[grep(incident, hwy_df.santiam$text),]
+
+## GENERATE MODEL    
     
     
     
